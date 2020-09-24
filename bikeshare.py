@@ -1,14 +1,13 @@
+# Count the rented bikes
+
 # Importing necessary libraries
 import pandas as pd 
 import numpy as np 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import confusion_matrix
 import sklearn.metrics as met
 from sklearn.linear_model import LinearRegression
 from matplotlib import pyplot as plt
-import json 
 
 # Function to convert 2d list to 1d list
 def twoD_List_to_oneD_List(s):
@@ -97,6 +96,16 @@ x = dataset.iloc[:,2:16]
 y = dataset.iloc[:,16].values
 # print(x)
 
+# Performing Exploratory Data Analaysis
+abcissa = [i for i in range(1,len(y)+1)]
+fig=plt.figure()
+ax=fig.add_axes([0,0,1,1])
+ax.bar(abcissa, y, color='r')
+ax.set_xlabel('Values')
+ax.set_ylabel('Count of bikes rented')
+ax.set_title('Bar Plot')
+plt.show()
+
 # Performing Z-Score to get rid of outliers
 X = Z_Score(x)
 
@@ -112,35 +121,8 @@ X_test = sc_X.transform(X_test)
 regressor = LinearRegression()
 regressor.fit(X_train,y_train)
 
-Result = {}
-result_0 = []
-result_1 = []
-
 # Predicting the Test Results
 Y_pred__ = regressor.predict(X_test)
-Result["Before_steps"] = list(Y_pred__)
 Y_pred_ = abs(Y_pred__)
 Y_pred = [ int(i) for i in Y_pred_]
-Result["After_steps"] = list(Y_pred)
-print(Result)
-
-json_object = json.dumps(Result,indent = 4)
-with open("output.json","w") as outfile:
-    outfile.write(json_object)
-print("Json file written successfully")
-# print("Predicted value of dependent variable: ", Y_pred)
-
-# evaluation of the prediction
-# 1st evaluation accuracy_score
-print(accuracy_score(y_test,Y_pred))
-# 2nd confusion matrix
-cm = confusion_matrix(y_test,Y_pred)
-print(cm)
-# 3rd roc/auc curve
-fpr,tpr,threshold = met.roc_curve(y_test,Y_pred)
-roc_auc = met.auc(fpr,tpr)
-print(roc_auc)
-plt.title("Receiver Operating Characteristics")
-plt.plot(fpr,tpr,label = 'AUC-%0.2f'%roc_auc, color='blue')
-plt.legend()
-plt.show()
+print(Y_pred)
